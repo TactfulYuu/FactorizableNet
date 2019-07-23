@@ -121,13 +121,14 @@ def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
 
     print 'before loop!'
     for i, sample in enumerate(loader): # (im_data, im_info, gt_objects, gt_relationships)
-        print ('in loop:',i)
+        print 'in loop 1'
         assert len(sample['visual']) == 1
         input_visual = sample['visual'][0].cuda()
         gt_objects = sample['objects']
         gt_relationships = sample['relations']
         image_info = sample['image_info']
         # Forward pass
+        print 'in loop 2'
         total_cnt_t, cnt_correct_t, eval_result_t = model.module.evaluate(
             input_visual, image_info, gt_objects, gt_relationships,
             top_Ns = top_Ns, nms=nms, triplet_nms=triplet_nms,
