@@ -107,7 +107,7 @@ def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
 
     print '========== Testing ======='
     model.eval()
-
+    print 'eval Success!'
     rel_cnt = 0.
     rel_cnt_correct = np.zeros(2)
     phrase_cnt_correct = np.zeros(2)
