@@ -115,12 +115,13 @@ def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
     total_region_rois_num = 0
     max_region_rois_num = 0
     result = []
-    
+
     batch_time = network.AverageMeter()
     end = time.time()
 
     print 'before loop!'
     for i, sample in enumerate(loader): # (im_data, im_info, gt_objects, gt_relationships)
+        print ('in loop:',i)
         assert len(sample['visual']) == 1
         input_visual = sample['visual'][0].cuda()
         gt_objects = sample['objects']
