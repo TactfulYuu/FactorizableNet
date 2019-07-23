@@ -132,7 +132,7 @@ class Factorizable_network(FN_v4):
 
     def forward_eval(self, im_data, im_info, gt_objects=None):
         # Currently, RPN support batch but not for MSDN
-        
+        '''
         features, object_rois, _ = self.rpn(im_data, im_info)
         '''
         if gt_objects is not None:
@@ -142,7 +142,7 @@ class Factorizable_network(FN_v4):
         else:
             gt_rois = None
         object_rois, region_rois, mat_object, mat_phrase, mat_region = self.graph_construction(object_rois, gt_rois=gt_rois)
-        '''
+        
         # roi pool
         pooled_object_features = self.roi_pool_object(features, object_rois).view(len(object_rois), -1)
         pooled_object_features = self.fc_obj(pooled_object_features)
