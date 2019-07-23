@@ -132,6 +132,7 @@ class Factorizable_network(FN_v4):
 
     def forward_eval(self, im_data, im_info, gt_objects=None):
         # Currently, RPN support batch but not for MSDN
+        '''
         features, object_rois, _ = self.rpn(im_data, im_info)
         if gt_objects is not None:
             gt_rois = np.concatenate([np.zeros((gt_objects.shape[0], 1)),
@@ -171,6 +172,7 @@ class Factorizable_network(FN_v4):
 
         return (cls_prob_object, bbox_object, object_rois, reranked_score), \
                 (cls_prob_predicate, mat_phrase, region_rois.size(0)),
+        '''
 
 if __name__ == '__main__':
     Factorizable_network(None, None)
