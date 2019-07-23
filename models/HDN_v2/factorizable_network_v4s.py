@@ -132,7 +132,7 @@ class Factorizable_network(FN_v4):
 
     def forward_eval(self, im_data, im_info, gt_objects=None):
         # Currently, RPN support batch but not for MSDN
-        
+        '''
         features, object_rois, _ = self.rpn(im_data, im_info)
         if gt_objects is not None:
             gt_rois = np.concatenate([np.zeros((gt_objects.shape[0], 1)),
@@ -151,7 +151,7 @@ class Factorizable_network(FN_v4):
         for i, mps in enumerate(self.mps_list):
             pooled_object_features, pooled_region_features = \
                 mps(pooled_object_features, pooled_region_features, mat_object, mat_region, object_rois, region_rois)
-        '''
+        
         pooled_phrase_features = self.phrase_inference(pooled_object_features, pooled_region_features, mat_phrase)
         pooled_object_features = F.relu(pooled_object_features)
         pooled_phrase_features = F.relu(pooled_phrase_features)
