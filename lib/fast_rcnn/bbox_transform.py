@@ -79,10 +79,10 @@ def bbox_transform_inv_hdn(boxes, deltas):
     
     widths = boxes[:, 2] - boxes[:, 0] + 1.0
     heights = boxes[:, 3] - boxes[:, 1] + 1.0
-    '''
+    
     ctr_x = boxes[:, 0] + 0.5 * widths
     ctr_y = boxes[:, 1] + 0.5 * heights
-    '''
+    
     if cfg.TRAIN.BBOX_NORMALIZE_TARGETS_PRECOMPUTED:
         deltas = deltas * np.array(cfg.TRAIN.BBOX_NORMALIZE_STDS) + np.array(cfg.TRAIN.BBOX_NORMALIZE_MEANS)
     
@@ -90,9 +90,10 @@ def bbox_transform_inv_hdn(boxes, deltas):
     dy = deltas[:, 1::4]
     dw = deltas[:, 2::4]
     dh = deltas[:, 3::4]
-
+    '''
     pred_ctr_x = dx * widths[:, np.newaxis] + ctr_x[:, np.newaxis]
     pred_ctr_y = dy * heights[:, np.newaxis] + ctr_y[:, np.newaxis]
+    '''
     pred_w = np.exp(dw) * widths[:, np.newaxis]
     pred_h = np.exp(dh) * heights[:, np.newaxis]
 
