@@ -144,9 +144,9 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         # batch inds are 0
         batch_inds = np.ones((proposals.shape[0], 1), dtype=np.float32) * i
         blob.append(np.hstack((batch_inds, proposals.astype(np.float32, copy=False), scores.astype(np.float32, copy=False))))
-
-    return np.concatenate(blob, axis=0)
     '''
+    return np.concatenate(blob, axis=0)
+    
 
 
 def _filter_boxes(boxes, min_size):
