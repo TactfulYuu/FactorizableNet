@@ -98,12 +98,14 @@ def build_loss(rpn_cls_score_reshape, rpn_bbox_pred, rpn_data):
 
 
 def generate_output_mapping(mapping_file, conv_layers, min_size=16, max_size=1001):
-    '''
+    
     if osp.isfile(mapping_file):
+        '''
         with open(mapping_file, 'r') as f:
             mappings = json.load(f)
             
         mappings = {int(k):int(v) for k,v in mappings.items()}
+        '''
         return mappings
     else:
         conv_layers.cuda()
@@ -116,6 +118,5 @@ def generate_output_mapping(mapping_file, conv_layers, min_size=16, max_size=100
 
         with open(mapping_file, 'w') as f:
             json.dump(mappings, f)
-    '''
     print('Done')
     return mappings
