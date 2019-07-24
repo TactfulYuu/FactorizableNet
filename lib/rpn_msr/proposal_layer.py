@@ -48,6 +48,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
     blob = []
     
     for i in range(batch_size):
+        '''
         im_info = im_infos[i]
         # the first set of _num_anchors channels are bg probs
         # the second set are the fg probs, which we want
@@ -133,7 +134,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         # print 'scores', scores
         '''
         keep = nms(np.hstack((proposals, scores)).astype(np.float32), nms_thres)
-        '''
+        
         if post_nms_topN > 0:
             keep = keep[:post_nms_topN]
         proposals = proposals[keep, :]
