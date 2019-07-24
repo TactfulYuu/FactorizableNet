@@ -66,9 +66,10 @@ class RPN(nn.Module):
         self.conv1 = Conv2d(512, 512, 3, same_padding=True)
         self.score_conv = Conv2d(512, self.anchor_num * 2, 1, relu=False, same_padding=False)
         self.bbox_conv = Conv2d(512, self.anchor_num * 4, 1, relu=False, same_padding=False)
-        '''
+        
         # initialize the parameters
         self.initialize_parameters()
+        '''
         self.opts['mappings'] = generate_output_mapping(osp.join(self.opts['anchor_dir'], 'vgg16_mappings.json'),
                                                         self.features)
         '''
