@@ -48,7 +48,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
     blob = []
     
     for i in range(batch_size):
-        '''
+        
         im_info = im_infos[i]
         # the first set of _num_anchors channels are bg probs
         # the second set are the fg probs, which we want
@@ -100,7 +100,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
 
         # Convert anchors into proposals via bbox transformations
         proposals = bbox_transform_inv(anchors, bbox_deltas)
-
+        '''
         # 2. clip predicted boxes to image
         if opts['dropout_box_runoff_image']:
             _allowed_border = 16
