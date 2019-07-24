@@ -81,7 +81,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         anchors = _anchors.reshape((1, A, 4)) + \
                   shifts.reshape((1, K, 4)).transpose((1, 0, 2))
         anchors = anchors.reshape((K * A, 4))
-
+        '''
         # Transpose and reshape predicted bbox transformations to get them
         # into the same order as the anchors:
         #
@@ -132,7 +132,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         # 8. return the top proposals (-> RoIs top)
         # print 'proposals', proposals
         # print 'scores', scores
-        '''
+        
         keep = nms(np.hstack((proposals, scores)).astype(np.float32), nms_thres)
         
         if post_nms_topN > 0:
