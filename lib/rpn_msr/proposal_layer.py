@@ -97,10 +97,10 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         # transpose to (1, H, W, A)
         # reshape to (1 * H * W * A, 1) where rows are ordered by (h, w, a)
         scores = scores.transpose((1, 2, 0)).reshape((-1, 1))
-        '''
+        
         # Convert anchors into proposals via bbox transformations
         proposals = bbox_transform_inv(anchors, bbox_deltas)
-        '''
+        
         # 2. clip predicted boxes to image
         if opts['dropout_box_runoff_image']:
             _allowed_border = 16

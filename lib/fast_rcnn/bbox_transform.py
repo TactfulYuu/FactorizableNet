@@ -108,6 +108,7 @@ def bbox_transform_inv_hdn(boxes, deltas):
     return pred_boxes
     '''
 
+
 def clip_boxes(boxes, im_shape):
     """
     Clip boxes to image boundaries.
