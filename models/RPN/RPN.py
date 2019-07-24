@@ -34,9 +34,9 @@ class RPN(nn.Module):
     anchor_ratios_normal_region = [0.25, 0.5, 1, 2, 4]
 
     def __init__(self, opts):
-        
-        super(RPN, self).__init__()
         '''
+        super(RPN, self).__init__()
+        
         # loading RPN configs
         self.opts = opts
         if self.opts['kmeans_anchors']:
