@@ -69,10 +69,10 @@ class RPN(nn.Module):
         
         # initialize the parameters
         self.initialize_parameters()
-        '''
+        
         self.opts['mappings'] = generate_output_mapping(osp.join(self.opts['anchor_dir'], 'vgg16_mappings.json'),
                                                         self.features)
-        '''
+        
     def initialize_parameters(self, normal_method='normal'):
 
         if normal_method == 'normal':
