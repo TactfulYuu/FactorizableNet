@@ -90,14 +90,14 @@ def bbox_transform_inv_hdn(boxes, deltas):
     dy = deltas[:, 1::4]
     dw = deltas[:, 2::4]
     dh = deltas[:, 3::4]
-    '''
+    
     pred_ctr_x = dx * widths[:, np.newaxis] + ctr_x[:, np.newaxis]
     pred_ctr_y = dy * heights[:, np.newaxis] + ctr_y[:, np.newaxis]
-    '''
     pred_w = np.exp(dw) * widths[:, np.newaxis]
     pred_h = np.exp(dh) * heights[:, np.newaxis]
 
     pred_boxes = np.zeros(deltas.shape, dtype=deltas.dtype)
+    '''
     # x1
     pred_boxes[:, 0::4] = pred_ctr_x - 0.5 * pred_w
     # y1
@@ -106,6 +106,7 @@ def bbox_transform_inv_hdn(boxes, deltas):
     pred_boxes[:, 2::4] = pred_ctr_x + 0.5 * pred_w - 1.0 
     # y2
     pred_boxes[:, 3::4] = pred_ctr_y + 0.5 * pred_h - 1.0 
+    '''
 
     return pred_boxes
     
