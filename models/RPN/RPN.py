@@ -107,7 +107,7 @@ class RPN(nn.Module):
         rpn_bbox_pred = self.bbox_conv(rpn_conv1)
         # print 'rpn_bbox_pred.std()', rpn_bbox_pred.data.std() * 4
 
-        '''
+        
         # proposal layer
         cfg_key = 'train' if self.training else 'test'
         rois = self.proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_info,
@@ -117,6 +117,7 @@ class RPN(nn.Module):
                                    mappings=self.opts['mappings'])
 
         # generating training labels and build the rpn loss
+        '''
         losses = {}
         if self.training and rpn_data is not None:
             loss_cls, loss_box, accs = build_loss(rpn_cls_score_reshape, rpn_bbox_pred, rpn_data)
