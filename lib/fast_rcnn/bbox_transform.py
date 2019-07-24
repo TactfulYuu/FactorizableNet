@@ -76,7 +76,7 @@ def bbox_transform_inv_hdn(boxes, deltas):
         return np.zeros((0,), dtype=deltas.dtype)
     
     boxes = boxes.astype(deltas.dtype, copy=False)
-    '''
+    
     widths = boxes[:, 2] - boxes[:, 0] + 1.0
     heights = boxes[:, 3] - boxes[:, 1] + 1.0
     ctr_x = boxes[:, 0] + 0.5 * widths
@@ -106,7 +106,7 @@ def bbox_transform_inv_hdn(boxes, deltas):
     pred_boxes[:, 3::4] = pred_ctr_y + 0.5 * pred_h - 1.0 
 
     return pred_boxes
-    '''
+    
 
 
 def clip_boxes(boxes, im_shape):
