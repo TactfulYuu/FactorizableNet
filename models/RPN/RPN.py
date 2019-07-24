@@ -117,7 +117,7 @@ class RPN(nn.Module):
                                    mappings=self.opts['mappings'])
 
         # generating training labels and build the rpn loss
-        '''
+        
         losses = {}
         if self.training and rpn_data is not None:
             loss_cls, loss_box, accs = build_loss(rpn_cls_score_reshape, rpn_bbox_pred, rpn_data)
@@ -133,15 +133,17 @@ class RPN(nn.Module):
 
             }
         return features, rois, losses
-        '''
+        
 
 
     @staticmethod
     def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_info,
                     _feat_stride, opts, anchor_scales, anchor_ratios, mappings):
+        '''
         rpn_cls_prob_reshape = rpn_cls_prob_reshape.data.cpu().numpy()
         rpn_bbox_pred = rpn_bbox_pred.data.cpu().numpy()
         x = proposal_layer_py(rpn_cls_prob_reshape, rpn_bbox_pred, im_info,
                     _feat_stride, opts, anchor_scales, anchor_ratios, mappings)
         x = network.np_to_variable(x, is_cuda=True)
         return x.view(-1, 6)
+        '''
