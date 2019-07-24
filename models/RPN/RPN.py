@@ -92,7 +92,7 @@ class RPN(nn.Module):
     #     return self.loss_cls + self.loss_box * 0.2
 
     def forward(self, im_data, im_info, gt_objects=None, dontcare_areas=None, rpn_data=None):
-        
+        # Segementation fault #####
         features = self.features(im_data)
         # print 'features.std()', features.data.std()
         rpn_conv1 = self.conv1(features)
@@ -110,13 +110,13 @@ class RPN(nn.Module):
         
         # proposal layer
         cfg_key = 'train' if self.training else 'test'
-        '''
+        
         rois = self.proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_info,
                                    self._feat_stride, self.opts['object'][cfg_key],
                                    self.opts['object']['anchor_scales'],
                                    self.opts['object']['anchor_ratios'],
                                    mappings=self.opts['mappings'])
-        '''
+        
         # generating training labels and build the rpn loss
         
         losses = {}
