@@ -34,7 +34,7 @@ class RPN(nn.Module):
     anchor_ratios_normal_region = [0.25, 0.5, 1, 2, 4]
 
     def __init__(self, opts):
-        '''
+        
         super(RPN, self).__init__()
         
         # loading RPN configs
@@ -54,7 +54,7 @@ class RPN(nn.Module):
                 np.meshgrid(self.anchor_scales_normal, self.anchor_ratios_normal, indexing='ij')
             self.opts['object']['anchor_scales'] = anchor_scales.reshape(-1)
             self.opts['object']['anchor_ratios'] = anchor_ratios.reshape(-1)
-
+        '''
         self.anchor_num = len(self.opts['object']['anchor_scales'])
 
         self.features = models.vgg16(pretrained=True).features
