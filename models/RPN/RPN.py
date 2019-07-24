@@ -34,7 +34,7 @@ class RPN(nn.Module):
     anchor_ratios_normal_region = [0.25, 0.5, 1, 2, 4]
 
     def __init__(self, opts):
-        '''
+        
         super(RPN, self).__init__()
         
         # loading RPN configs
@@ -71,7 +71,7 @@ class RPN(nn.Module):
         self.initialize_parameters()
         self.opts['mappings'] = generate_output_mapping(osp.join(self.opts['anchor_dir'], 'vgg16_mappings.json'),
                                                         self.features)
-        '''
+        
     def initialize_parameters(self, normal_method='normal'):
 
         if normal_method == 'normal':
