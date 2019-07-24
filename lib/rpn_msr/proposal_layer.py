@@ -100,7 +100,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         
         # Convert anchors into proposals via bbox transformations
         proposals = bbox_transform_inv(anchors, bbox_deltas)
-        '''
+        
         # 2. clip predicted boxes to image
         if opts['dropout_box_runoff_image']:
             _allowed_border = 16
@@ -144,7 +144,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_infos,
         # batch inds are 0
         batch_inds = np.ones((proposals.shape[0], 1), dtype=np.float32) * i
         blob.append(np.hstack((batch_inds, proposals.astype(np.float32, copy=False), scores.astype(np.float32, copy=False))))
-    '''
+    
     return np.concatenate(blob, axis=0)
     
 
