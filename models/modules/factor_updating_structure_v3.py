@@ -133,6 +133,7 @@ class factor_updating_structure(nn.Module):
 	# 							att_features_reg,))
 	# 	return torch.stack(feature_data, 0)
 
+	####看到这了！！！####
 	def region_to_object(self, feat_obj, feat_region, select_mat):
 		feat_obj_att = self.att_region2object_obj(feat_obj)
 		feat_reg_att = self.att_region2object_reg(feat_region).transpose(1, 3) # transpose the [channel] to the last

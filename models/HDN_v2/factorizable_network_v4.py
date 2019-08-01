@@ -240,12 +240,15 @@ class Factorizable_network(nn.Module):
         object_rois, region_rois, mat_object, mat_phrase, mat_region = self.graph_construction(object_rois, gt_rois=gt_rois)
         # roi pool 
         pooled_object_features = self.roi_pool_object(features, object_rois).view(len(object_rois), -1)
-        pooled_object_features = self.fc_obj(pooled_object_features)
+        pooled_object_features = self.fc_obj(pooled_object_features) # 建立网络
         pooled_region_features = self.roi_pool_region(features, region_rois)
-        pooled_region_features = self.fc_region(pooled_region_features)
-        bbox_object = self.bbox_obj(F.relu(pooled_object_features))
+        pooled_region_features = self.fc_region(pooled_region_features) # 建立网络
+        bbox_object = self.bbox_obj(F.relu(pooled_object_features)) # 非线性激活函数: relu(x) = max(0,x)
 
         for i, mps in enumerate(self.mps_list):
+            # mps是self.MPS_iter的网络
+            # mat_region：数据类型为bool，即obj存在在任何一个pair中，则为true
+            # mat_object：为mat_region的转置
             pooled_object_features, pooled_region_features = \
                 mps(pooled_object_features, pooled_region_features, mat_object, mat_region)
 
@@ -269,11 +272,13 @@ class Factorizable_network(nn.Module):
         return (cls_prob_object, bbox_object, object_rois, reranked_score), \
                 (cls_prob_predicate, mat_phrase, region_rois.size(0)),
 
+    # 对单个batch（一张image）进行测试：
+    # im_data:图片     im_info:图片信息
     def evaluate(self, im_data, im_info, gt_objects, gt_relationships,
         thr=0.5, nms=-1., triplet_nms=-1., top_Ns = [100],
         use_gt_boxes=False):
-        gt_objects = gt_objects[0]
-        gt_relationships = gt_relationships[0]
+        gt_objects = gt_objects[0]  # ground truth object(object bbox/标签的正确答案)
+        gt_relationships = gt_relationships[0] # ground truth relationship(predicate的正确答案)
         if use_gt_boxes:
             object_result, predicate_result = self.forward_eval(im_data, im_info,
                             gt_objects=gt_objects)

@@ -46,7 +46,7 @@ def graph_construction(object_rois, gt_rois=None): # if use GT boxes, we merge t
 
     if gt_rois is not None:
         object_rois = merge_gt_rois(object_rois, gt_rois) # to make the message passing more likely to training
-        sub_assignment, obj_assignment, _ = _generate_pairs(range(len(gt_rois)))
+        sub_assignment, obj_assignment, _ = _generate_pairs(range(len(gt_rois))) # 建立object-subject的pairs(全连接)，后两个参数为Null
     else:
         sub_assignment=None
         obj_assignment=None
@@ -215,22 +215,22 @@ def _sample_rois(rois, gt_rois, rois_per_image, fg_frac):
 
     return keep_inds, gt_assignment, fg_indicator, fg_duplicate
 
-
+# 得到subject和object合并后的rois等数据（经过nms筛选）
 def _setup_connection(object_rois,  nms_thres=0.6, sub_assignment_select = None, obj_assignment_select = None):
     """Generate a random sample of RoIs comprising foreground and background
     examples.
     """
     # overlaps: (rois x gt_boxes)
     # t_start = time.time()
-    sub_assignment, obj_assignment, rel_assignment = _generate_pairs(range(object_rois.shape[0]), sub_assignment_select, obj_assignment_select)
-    region_rois = box_union(object_rois[sub_assignment], object_rois[obj_assignment])
-    mapping = nms(region_rois[:, 1:].astype(np.float32), nms_thres, retain_all=True)
+    sub_assignment, obj_assignment, rel_assignment = _generate_pairs(range(object_rois.shape[0]), sub_assignment_select, obj_assignment_select) # 建立subject-object的全连接pairs
+    region_rois = box_union(object_rois[sub_assignment], object_rois[obj_assignment]) # 将subject和object的bbox合并（四个坐标都取max）
+    mapping = nms(region_rois[:, 1:].astype(np.float32), nms_thres, retain_all=True) # 用nms删冗余的bbox（subject和object合并的）
 
-    keep, keep_inverse = np.unique(mapping, return_inverse=True)
-    selected_region_rois = region_rois[keep, :5]
+    keep, keep_inverse = np.unique(mapping, return_inverse=True) # 删除mapping中重复的元素，并将新的mapping存放在keep_inverse，keep中是新mapping重元素在旧mapping中的index
+    selected_region_rois = region_rois[keep, :5] # 得到最终筛选完的bbox（subject和object合并的），存放在selected_region_rois
 
-    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64)
-    mat_relationship = np.zeros((len(rel_assignment), 3), dtype=np.int64)
+    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64) # 行:region 列:object 每个region/object在一个pair中就+1
+    mat_relationship = np.zeros((len(rel_assignment), 3), dtype=np.int64) # mat_relationship：sub_index & obj_index & relationship（合并后的bbox）
     mat_relationship[:, 0] = sub_assignment[rel_assignment]
     mat_relationship[:, 1] = obj_assignment[rel_assignment]
     mat_relationship[:, 2] = keep_inverse[rel_assignment]
@@ -239,8 +239,8 @@ def _setup_connection(object_rois,  nms_thres=0.6, sub_assignment_select = None,
         mat_region[region_id, sub_assignment[relationship_id]] +=1
         mat_region[region_id, obj_assignment[relationship_id]] +=1
 
-    mat_region = mat_region.astype(np.bool, copy=False)
-    mat_object = mat_region.transpose()
+    mat_region = mat_region.astype(np.bool, copy=False) # 将mat_region中数据类型从int转化为bool，即obj存在在任何一个pair中，则为true
+    mat_object = mat_region.transpose() # 对矩阵mat_region进行转置，存放在mat_object中
 
 
     return object_rois[:, :5], selected_region_rois, mat_object, mat_relationship, mat_region
@@ -254,9 +254,11 @@ def box_union(box1, box2):
 
 
 
-
+# 生成object-subject的pairs
+# id_i:subject  id_j:object
 def _generate_pairs(ids, sub_assignment_select = None, obj_assignment_select = None):
-    id_i, id_j = np.meshgrid(ids, ids, indexing='ij') # Grouping the input object rois
+    id_i, id_j = np.meshgrid(ids, ids, indexing='ij') # Grouping the input object rois 
+    # 将id_i, id_j变为1*n的np向量
     id_i = id_i.reshape(-1)
     id_j = id_j.reshape(-1)
     # removing diagonal items

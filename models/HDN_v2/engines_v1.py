@@ -102,16 +102,17 @@ def train(loader, model, optimizer, exp_logger, epoch, train_all, print_freq=100
 
 
 
-
+# 对整个data set进行evaluation
+# use_gt_boxes:是否使用ground truth box（github上给出的三个测试没有使用）
 def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
 
     print '========== Testing ======='
-    model.eval()
-    print 'eval Success!'
-    rel_cnt = 0.
-    rel_cnt_correct = np.zeros(2)
-    phrase_cnt_correct = np.zeros(2)
-    pred_cnt_correct = np.zeros(2)
+    model.eval() # pytorch：将模式设置为evaluation模式
+    print 'set eval Success!'
+    rel_cnt = 0. # 已测试的batch个数
+    rel_cnt_correct = np.zeros(2) # 正确的batch个数
+    phrase_cnt_correct = np.zeros(2) # 正确的phrase个数
+    pred_cnt_correct = np.zeros(2) # 正确的predicate（relationship）个数
     total_region_rois_num = 0
     max_region_rois_num = 0
     result = []
@@ -123,14 +124,15 @@ def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
     # enumerate: (index, element)
     for i, sample in enumerate(loader): # (im_data, im_info, gt_objects, gt_relationships)
         print 'in loop 1'
-        assert len(sample['visual']) == 1
-        input_visual = sample['visual'][0].cuda()
+        assert len(sample['visual']) == 1 # 检查batch_size:author规定evaluation的batch_size必须为1
+        input_visual = sample['visual'][0].cuda() # 将图片放到GPU上
         gt_objects = sample['objects']
         gt_relationships = sample['relations']
         image_info = sample['image_info']
         # Forward pass
         print 'in loop 2'
-        # 测试函数： cnt_correct_t（四元，正确数量）
+        # 测试函数(对单个batch)： model.module.evaluate->models/HDN_v2/factorizable_network_v4.py
+        # cnt_correct_t（四元，正确数量）
         total_cnt_t, cnt_correct_t, eval_result_t = model.module.evaluate(
             input_visual, image_info, gt_objects, gt_relationships,
             top_Ns = top_Ns, nms=nms, triplet_nms=triplet_nms,
