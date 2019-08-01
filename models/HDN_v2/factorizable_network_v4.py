@@ -35,7 +35,7 @@ import engines_v1 as engines
 DEBUG = False
 TIME_IT = False
 
-
+# 父类nn.Module： torch.nn.Modules相当于是对网络某种层的封装，包括网络结构以及网络参数，和其他有用的操作如输出参数
 class Factorizable_network(nn.Module):
     _feat_stride = 16
 
@@ -46,7 +46,7 @@ class Factorizable_network(nn.Module):
         self.n_classes_obj = trainset.num_object_classes
         self.n_classes_pred = trainset.num_predicate_classes
         self.MPS_iter = opts['MPS_iter']
-        # loss weight
+        # loss weight：loss weight是什么作用？
         ce_weights_obj = np.sqrt(trainset.inverse_weight_object)
         ce_weights_obj[0] = 1.
         ce_weights_pred = np.sqrt(trainset.inverse_weight_predicate)
@@ -227,6 +227,7 @@ class Factorizable_network(nn.Module):
         losses['loss'] = self.loss(losses)
         return losses
 
+    # 得到relationship
     def forward_eval(self, im_data, im_info, gt_objects=None):
         # Currently, RPN support batch but not for MSDN
         features, object_rois, _ = self.rpn(im_data, im_info)
@@ -237,7 +238,7 @@ class Factorizable_network(nn.Module):
         else:
             gt_rois = None
         object_rois, region_rois, mat_object, mat_phrase, mat_region = self.graph_construction(object_rois, gt_rois=gt_rois)
-        # roi pool
+        # roi pool 
         pooled_object_features = self.roi_pool_object(features, object_rois).view(len(object_rois), -1)
         pooled_object_features = self.fc_obj(pooled_object_features)
         pooled_region_features = self.roi_pool_region(features, region_rois)
@@ -284,6 +285,7 @@ class Factorizable_network(nn.Module):
         region_rois_num = predicate_result[2]
 
         # interpret the model output
+        # 解释模型的输出（relationship）
         obj_boxes, obj_scores, obj_cls, subject_inds, object_inds, \
             subject_boxes, object_boxes, predicate_inds, \
             sub_assignment, obj_assignment, total_score = \
@@ -299,7 +301,7 @@ class Factorizable_network(nn.Module):
                                         subject_inds, object_inds, predicate_inds,
                                         subject_boxes, object_boxes, top_Ns, thres=thr)
         _, phrase_correct_cnt = check_phrase_recall(gt_objects, gt_relationships,
-                                        subject_inds, object_inds, predicate_inds,
+                                        subject_inds, object_inds, predicate_inds, #三个结果（宾、主、谓）
                                         subject_boxes, object_boxes, top_Ns, thres=thr)
 
         result = {'objects': {

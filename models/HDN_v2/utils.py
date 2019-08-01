@@ -180,7 +180,7 @@ def build_loss_bbox(bbox_pred, roi_data, fg_cnt):
 
 
 
-
+# 预测relationship函数
 def interpret_relationships(cls_prob, bbox_pred, rois, cls_prob_predicate,
                         	mat_phrase, im_info, nms=-1., clip=True, min_score=0.01,
                         	top_N=100, use_gt_boxes=False, triplet_nms=-1., topk=10, 
@@ -254,7 +254,7 @@ def interpret_relationships(cls_prob, bbox_pred, rois, cls_prob_predicate,
         sub_boxes = pred_boxes[sub_assignment] # boxes of subjects
         obj_boxes = pred_boxes[obj_assignment] # boxes of objects
 
-
+        # triplet_nms是triplet_nms_py函数的临界值
         if triplet_nms > 0.:
             sub_ids, obj_ids, pred_ids, sub_boxes, obj_boxes, keep = triplet_nms_py(sub_ids, obj_ids, pred_ids, sub_boxes, obj_boxes, triplet_nms)
             sub_assignment = sub_assignment[keep]

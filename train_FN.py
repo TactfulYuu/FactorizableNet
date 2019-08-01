@@ -33,7 +33,7 @@ import pdb
 # from tensorboard_logger import configure, log_value
 
 parser = argparse.ArgumentParser('Options for training Hierarchical Descriptive Model in pytorch')
-
+# 配置文件路径
 parser.add_argument('--path_opt', default='options/FN_v4/map_v2.yaml', type=str,
                     help='path to a yaml options file')
 
@@ -113,7 +113,7 @@ def main():
         },
         'data':{
             'dataset_option': args.dataset_option,
-            'batch_size': torch.cuda.device_count(),
+            'batch_size': torch.cuda.device_count(), # batch_size根据GPU数量调节
         },
         'optim': {
             'lr': args.learning_rate,
@@ -132,6 +132,7 @@ def main():
     if args.path_opt is not None:
         with open(args.path_opt, 'r') as handle:
             options_yaml = yaml.load(handle)
+        # 此处更新了options的结构，yaml路径为options/models，选择方法根据命令行传入模型的参数
         options = utils.update_values(options, options_yaml)
         with open(options['data']['opts'], 'r') as f:
             data_opts = yaml.load(f)
@@ -152,6 +153,7 @@ def main():
     torch.manual_seed(args.seed + 1)
     torch.cuda.manual_seed(args.seed + 2)
 
+    # 设置dataset，getattr获取dataset信息确定使用lib/datasets下三个py文件中的哪一个，后面的为初始化参数
     print("Loading training set and testing set..."),
     train_set = getattr(datasets, options['data']['dataset'])(data_opts, 'train',
                                 dataset_option=options['data'].get('dataset_option', None),
@@ -162,13 +164,18 @@ def main():
     print("Done")
 
     # Model declaration
+    # model从options['model']['arch']=FN_v4中读取
+    # from HDN_v2.factorizable_network_v4s import Factorizable_network as FN_v4s（见models/_init_.py）
     model = getattr(models, options['model']['arch'])(train_set, opts = options['model'])
 
     # pass enough message for anchor target generation
+    # 只有train时才需要设置的参数，test时为none
     train_set._feat_stride = model.rpn._feat_stride
     train_set._rpn_opts = model.rpn.opts
     print("Done.")
 
+    # 加载数据：函数见lib/datasets下三个py文件
+    # batch_size根据GPU数量调节，只在train的时候生效，test时batch size固定为1
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=options['data']['batch_size'],
                                                 shuffle=True, num_workers=args.workers,
                                                 pin_memory=True,
@@ -271,7 +278,8 @@ def main():
 
     #  network.weights_normal_init(net, dev=0.01)
     top_Ns = [50, 100]
-
+    # 测试函数入口
+    # 测试函数test见models/HDN_v2/engines_v1.py
     if args.evaluate:
         recall, result = model.module.engines.test(test_loader, model, top_Ns,
                                             nms=args.nms,

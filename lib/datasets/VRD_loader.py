@@ -34,6 +34,7 @@ class VRD(data.Dataset):
         self.inverse_weight_predicate = torch.FloatTensor(inverse_weight['predicate'])
         # print self.inverse_weight_predicate
         ann_file_path = osp.join(annotation_dir, self.name + '.json')
+        # self.annotations：存储在json文件中的注释
         self.annotations = json.load(open(ann_file_path))
 
         # categories
@@ -44,7 +45,8 @@ class VRD(data.Dataset):
         self._object_class_to_ind = dict(zip(self.object_classes, xrange(self.num_object_classes)))
         self._predicate_class_to_ind = dict(zip(self.predicate_classes, xrange(self.num_predicate_classes)))
 
-        # image transformation
+        # image transformation()
+        # 图像归一化？ transforms.Normalize使用如下公式进行归一化：channel=（channel-mean）/std
         normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         self.transform = transforms.Compose([
                 transforms.ToTensor(),
@@ -56,19 +58,31 @@ class VRD(data.Dataset):
         self._rpn_opts = None
 
     def __getitem__(self, index):
+        '''
+        item数据结构:
+            rpn_targets:
+            path:           标注所在路径
+            image_info:     图片信息（image_height, image_width, scale_factor, max_size）
+            visual:         从array转换为Image的图片
+            objects:        图片中的object的bbox和class（GroundTruth）
+            relatonship:    图片中的relationship（GroundTruth）
+        '''
         # Sample random scales to use for each image in this batch
+        # item是每张图片load进来的数据结构
         item = {'rpn_targets': {}}
 
         target_scale = self.opts[self.cfg_key]['SCALES'][npr.randint(0, high=len(self.opts[self.cfg_key]['SCALES']))]
         img = cv2.imread(osp.join(self._data_path, self.annotations[index]['path']))
         img_original_shape = img.shape
         item['path']= self.annotations[index]['path']
+        # 缩放图片到小于option中的最大值
         img, im_scale = self._image_resize(img, target_scale, self.opts[self.cfg_key]['MAX_SIZE'])
         # restore the [image_height, image_width, scale_factor, max_size]
         item['image_info'] = np.array([img.shape[0], img.shape[1], im_scale, 
                     img_original_shape[0], img_original_shape[1]], dtype=np.float)
-        item['visual'] = Image.fromarray(img)
-
+        # 将矩阵转换为Image
+        item['visual'] = Image.fromarray(img) 
+        # 图像归一化？
         if self.transform is not None:
             item['visual']  = self.transform(item['visual'])
 
@@ -79,8 +93,11 @@ class VRD(data.Dataset):
         #     item['visual'] = F.pad(item['visual'], (0, pad_w, 0, pad_h)).data
 
         _annotation = self.annotations[index]
+        # 从_annotation['objects']中读入object的ground truth（bbox和class）
         gt_boxes_object = np.zeros((len(_annotation['objects']), 5))
+        # box的坐标
         gt_boxes_object[:, 0:4] = np.array([obj['bbox'] for obj in _annotation['objects']], dtype=np.float) * im_scale
+        # box对应的class
         gt_boxes_object[:, 4]   = np.array([obj['class'] for obj in _annotation['objects']])
         item['objects'] = gt_boxes_object
         if self.cfg_key == 'train': # calculate the RPN target
@@ -88,7 +105,7 @@ class VRD(data.Dataset):
                                 self._feat_stride, self._rpn_opts['object'],
                                 mappings = self._rpn_opts['mappings'])
 
-
+        # 获取relationship（predicate）的ground truth
         gt_relationships = np.zeros([len(_annotation['objects']), (len(_annotation['objects']))], dtype=np.long)
         for rel in _annotation['relationships']:
             gt_relationships[rel['sub_id'], rel['obj_id']] = rel['predicate']

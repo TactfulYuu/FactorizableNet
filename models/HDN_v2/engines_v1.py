@@ -130,6 +130,7 @@ def test(loader, model, top_Ns, nms=-1., triplet_nms=-1., use_gt_boxes=False):
         image_info = sample['image_info']
         # Forward pass
         print 'in loop 2'
+        # 测试函数： cnt_correct_t（四元，正确数量）
         total_cnt_t, cnt_correct_t, eval_result_t = model.module.evaluate(
             input_visual, image_info, gt_objects, gt_relationships,
             top_Ns = top_Ns, nms=nms, triplet_nms=triplet_nms,

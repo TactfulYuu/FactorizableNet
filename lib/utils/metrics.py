@@ -41,7 +41,7 @@ def get_phrase_boxes(sub_boxes, obj_boxes):
 def check_phrase_recall(gt_objects, gt_relationships, 
         subject_inds, object_inds, predicate_inds, 
         subject_boxes, object_boxes, top_Ns, thres=0.5):
-    # rearrange the ground truth
+    # rearrange the ground truth （正确答案）
     gt_rel_sub_idx, gt_rel_obj_idx = np.where(gt_relationships > 0) # ground truth number
     gt_sub = gt_objects[gt_rel_sub_idx, :5]
     gt_obj = gt_objects[gt_rel_obj_idx, :5]

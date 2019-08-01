@@ -100,7 +100,9 @@ def triplet_nms(sub_ids, obj_ids, pred_ids, sub_boxes, obj_boxes, thresh):
 
         w = np.maximum(0.0, sub_xx2 - sub_xx1 + 1)
         h = np.maximum(0.0, sub_yy2 - sub_yy1 + 1)
+        # 两个bounding box面积重叠的地方
         inter = w * h
+        # 计算IOU
         sub_ovr = inter / (sub_areas[i] + sub_areas[order[1:]] - inter)
 
         w = np.maximum(0.0, obj_xx2 - obj_xx1 + 1)
