@@ -41,9 +41,10 @@ def graph_construction(object_rois, gt_rois=None): # if use GT boxes, we merge t
     # pdb.set_trace()
     #     object_rois:  (1 x H x W x A, 5) [0, x1, y1, x2, y2]
     #     region_rois:  (1 x H x W x A, 5) [0, x1, y1, x2, y2]
-    object_roi_num = min(cfg.TEST.BBOX_NUM, object_rois.shape[0])
+    # 根据config中的测试用bbox数量，选择测试的object_roi的数量
+    object_roi_num = min(cfg.TEST.BBOX_NUM, object_rois.shape[0]) 
     object_rois = object_rois[:object_roi_num]
-
+    
     if gt_rois is not None:
         object_rois = merge_gt_rois(object_rois, gt_rois) # to make the message passing more likely to training
         sub_assignment, obj_assignment, _ = _generate_pairs(range(len(gt_rois))) # 建立object-subject的pairs(全连接)，后两个参数为Null
@@ -229,7 +230,7 @@ def _setup_connection(object_rois,  nms_thres=0.6, sub_assignment_select = None,
     keep, keep_inverse = np.unique(mapping, return_inverse=True) # 删除mapping中重复的元素，并将新的mapping存放在keep_inverse，keep中是新mapping重元素在旧mapping中的index
     selected_region_rois = region_rois[keep, :5] # 得到最终筛选完的bbox（subject和object合并的），存放在selected_region_rois
 
-    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64) # 行:region 列:object 每个region/object在一个pair中就+1
+    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64) # 行:region 列:object 每个object在一个pair中就+1
     mat_relationship = np.zeros((len(rel_assignment), 3), dtype=np.int64) # mat_relationship：sub_index & obj_index & relationship（合并后的bbox）
     mat_relationship[:, 0] = sub_assignment[rel_assignment]
     mat_relationship[:, 1] = obj_assignment[rel_assignment]

@@ -230,6 +230,7 @@ class Factorizable_network(nn.Module):
     # 得到relationship
     def forward_eval(self, im_data, im_info, gt_objects=None):
         # Currently, RPN support batch but not for MSDN
+        # 传入图片和图片信息，得到特征图和ROI
         features, object_rois, _ = self.rpn(im_data, im_info)
         if gt_objects is not None:
             gt_rois = np.concatenate([np.zeros((gt_objects.shape[0], 1)),
@@ -342,6 +343,7 @@ class Factorizable_network(nn.Module):
     def graph_construction(object_rois, gt_rois=None):
         if isinstance(object_rois, torch.Tensor):
             object_rois = object_rois.cpu().numpy()
+        # 函数见lib/utils/graph_construction()
         object_rois, region_rois, mat_object, mat_phrase, mat_region = graph_construction_py(object_rois, gt_rois)
         object_rois = network.np_to_variable(object_rois, is_cuda=True)
         region_rois = network.np_to_variable(region_rois, is_cuda=True)
