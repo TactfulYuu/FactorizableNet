@@ -240,7 +240,7 @@ def _setup_connection(object_rois,  nms_thres=0.6, sub_assignment_select = None,
         mat_region[region_id, sub_assignment[relationship_id]] +=1
         mat_region[region_id, obj_assignment[relationship_id]] +=1
 
-    mat_region = mat_region.astype(np.bool, copy=False) # 将mat_region中数据类型从int转化为bool，即obj存在在任何一个pair中，则为true
+    mat_region = mat_region.astype(np.bool, copy=False) # 将mat_region中数据类型从int转化为bool，即obj存在在改行代表的pair中，则为true
     mat_object = mat_region.transpose() # 对矩阵mat_region进行转置，存放在mat_object中
 
 

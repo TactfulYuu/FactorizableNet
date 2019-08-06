@@ -248,7 +248,7 @@ class Factorizable_network(nn.Module):
 
         for i, mps in enumerate(self.mps_list):
             # mps是self.MPS_iter的网络
-            # mat_region：数据类型为bool，即obj存在在任何一个pair中，则为true
+            # mat_region：数据类型为bool，即obj存在在该行所代表的pair中，则为true
             # mat_object：为mat_region的转置
             pooled_object_features, pooled_region_features = \
                 mps(pooled_object_features, pooled_region_features, mat_object, mat_region)

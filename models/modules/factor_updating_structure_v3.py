@@ -12,7 +12,7 @@ from lib.network import GroupDropout
 VISUALIZE_RESULTS = False
 TIME_IT = False
 
-
+# SMP：Message Passing 结构函数
 class factor_updating_structure(nn.Module):
 	def __init__(self, opts):
 		super(factor_updating_structure, self).__init__()
