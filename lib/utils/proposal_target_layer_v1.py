@@ -230,7 +230,7 @@ def _setup_connection(object_rois,  nms_thres=0.6, sub_assignment_select = None,
     keep, keep_inverse = np.unique(mapping, return_inverse=True) # 删除mapping中重复的元素，并将新的mapping存放在keep_inverse，keep中是新mapping重元素在旧mapping中的index
     selected_region_rois = region_rois[keep, :5] # 得到最终筛选完的bbox（subject和object合并的），存放在selected_region_rois
 
-    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64) # 行:region 列:object 每个object在一个pair中就+1
+    mat_region = np.zeros((len(keep), object_rois.shape[0]), dtype=np.int64) # 行:region 列:object 每个object在一个region中就+1(见下方for循环)
     mat_relationship = np.zeros((len(rel_assignment), 3), dtype=np.int64) # mat_relationship：sub_index & obj_index & relationship（合并后的bbox）
     mat_relationship[:, 0] = sub_assignment[rel_assignment]
     mat_relationship[:, 1] = obj_assignment[rel_assignment]

@@ -92,7 +92,7 @@ class factor_updating_structure(nn.Module):
 		C = query.size(1)
 		assert query.size(1) == reference.size(0)
 		similarity = torch.sum(query * reference.unsqueeze(0), dim=1, keepdim=True) / np.sqrt(C + 1e-10) #  follow operations in [Attention is all you need]
-		prob = F.softmax(similarity, dim=0)
+		prob = F.softmax(similarity, dim=0) # 计算subgraph中包含target object的几率，对应paper中的pi(Sk)
 		weighted_feature = torch.sum(features * prob, dim=0, keepdim=False)
 		return weighted_feature
 
@@ -136,8 +136,8 @@ class factor_updating_structure(nn.Module):
 	####看到这了！！！####
 	def region_to_object(self, feat_obj, feat_region, select_mat):
 		feat_obj_att = self.att_region2object_obj(feat_obj)
-		feat_reg_att = self.att_region2object_reg(feat_region).transpose(1, 3) # transpose the [channel] to the last
-		feat_region_transposed = feat_region.transpose(1, 3)
+		feat_reg_att = self.att_region2object_reg(feat_region).transpose(1, 3) # transpose the [channel] to the last, 为何要交换1、3两个维度
+		feat_region_transposed = feat_region.transpose(1, 3) # 为何要交换1、3两个维度
 		C_att = feat_reg_att.size(3)
 		C_reg = feat_region_transposed.size(3)
 
@@ -145,11 +145,11 @@ class factor_updating_structure(nn.Module):
 		transfer_list = np.where(select_mat > 0)
 		for f_id in range(feat_obj.size(0)):
 			assert len(np.where(select_mat[f_id, :] > 0)[0]) > 0, "Something must be wrong. Please check the code."
-			source_indices = transfer_list[1][transfer_list[0] == f_id]
-			source_indices = Variable(torch.from_numpy(source_indices).type(torch.cuda.LongTensor), requires_grad=False)
-			feat_region_source = torch.index_select(feat_region_transposed, 0, source_indices)
+			source_indices = transfer_list[1][transfer_list[0] == f_id] # feature所在的regions的index set
+			source_indices = Variable(torch.from_numpy(source_indices).type(torch.cuda.LongTensor), requires_grad=False) # 类型转换：torch.index_select第三个参数要求类型为LongTensor
+			feat_region_source = torch.index_select(feat_region_transposed, 0, source_indices) # 根据object所在的regions的id，选出对应的region_feature
 			feature_data.append(self._attention_merge(feat_obj_att[f_id],
-								torch.index_select(feat_reg_att, 0, source_indices).view(-1, C_att),
+								torch.index_select(feat_reg_att, 0, source_indices).view(-1, C_att), # 从feat_reg_att中根据obj所在的region的id，选出对应的张量
 								feat_region_source.view(-1, C_reg),))
 		return torch.stack(feature_data, 0)
 
